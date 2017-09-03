@@ -1,4 +1,4 @@
-console.log('this is loaded');
+console.log('loaded twitter keys');
 
 function getMyKeys() {
 	return { 
