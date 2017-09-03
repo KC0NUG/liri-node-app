@@ -32,7 +32,6 @@ if (commandType === "my-tweets") {
       console.log(error);
     }
   });
-  
 }
 else if (commandType === "spotify-this-song"){
   var spotify = require('node-spotify-api');
@@ -67,10 +66,65 @@ else if (commandType === "spotify-this-song"){
     writeLog(outputstring);
   });
 }
+
+
 else if (commandType === "movie-this") {
-  console.log("movie-this");
-  // var LoadSpotifyRandom = require("./random.txt");
+  var request = require('request');
+  function queryUrl(title) {
+  return "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&apikey=40e9cece";
+  }
+  var movieName = "";
+  if (process.argv.length === 4){
+    movieName = commandSearch;
+  }
+  else {
+    movieName = 'Mr. Nobody';
+  }
+  request(queryUrl(movieName), function(err, res, body) {
+    if (err) return console.error(err);
+    console.log("movie-this " + movieName);
+    outputstring = commandType + ' ' + movieName + '\n';
+    // console.log(JSON.parse(body));
+    console.log("\tTitle: " + JSON.parse(body).Title);
+    outputstring += '\tTitle: ' + JSON.parse(body).Title + '\n';
+    console.log("\tYear: " + JSON.parse(body).Year);
+    outputstring += '\tYear: ' + JSON.parse(body).Year + '\n';
+    console.log("\tIMDB Rating: " + JSON.parse(body).imdbRating);
+    outputstring += '\tIMDB Rating: ' + JSON.parse(body).imdbRating + '\n';
+
+    //  if rotten tomatoes rating the print
+    var RottenTomatoes = 'Rotten Tomatoes';
+    var foundRottenTomatoes = false;
+    for (b=0; b< JSON.parse(body).Ratings.length; b++){
+      if (RottenTomatoes === JSON.parse(body).Ratings[b].Source){
+        // console.log("found Rotten tomatoes");
+        foundRottenTomatoes = true;
+        console.log("\tRotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+        outputstring += '\tRotten Tomatoes Rating: ' + JSON.parse(body).Ratings[1].Value + '\n';
+      } 
+    }
+    if (!foundRottenTomatoes){
+      console.log("\tRotten Tomatoes Rating: Not Available");
+      outputstring += '\tRotten Tomatoes Rating: Not Available\n';
+    }
+   
+    // console.log("\tRotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+    // outputstring += '\tRotten Tomatoes Rating: ' + JSON.parse(body).Ratings[1].Value + '\n';
+
+
+    console.log("\tCountry: " + JSON.parse(body).Country);
+    outputstring += '\tCountry: ' + JSON.parse(body).Country + '\n';
+    console.log("\tLanguage: " + JSON.parse(body).Language);
+    outputstring += '\tLanguage: ' + JSON.parse(body).Language + '\n';
+    console.log("\tPlot: " + JSON.parse(body).Plot);
+    outputstring += '\tPlot: ' + JSON.parse(body).Plot + '\n';
+    console.log("\tActors: " + JSON.parse(body).Actors);
+    outputstring += '\tActors: ' + JSON.parse(body).Actors + '\n';
+    writeLog(outputstring);
+  });
 }
+
+
 else if (commandType === "do-what-it-says") {
   console.log("do-what-it-says");
   // var LoadSpotifyRandom = require("./random.txt");
